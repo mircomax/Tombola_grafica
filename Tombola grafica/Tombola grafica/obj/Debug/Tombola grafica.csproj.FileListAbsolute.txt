@@ -1,0 +1,10 @@
+C:\Users\mirco\Desktop\esercizi classi\Tombola grafica\Tombola grafica\bin\Debug\Tombola grafica.exe.config
+C:\Users\mirco\Desktop\esercizi classi\Tombola grafica\Tombola grafica\bin\Debug\Tombola grafica.exe
+C:\Users\mirco\Desktop\esercizi classi\Tombola grafica\Tombola grafica\bin\Debug\Tombola grafica.pdb
+C:\Users\mirco\Desktop\esercizi classi\Tombola grafica\Tombola grafica\obj\Debug\Tombola grafica.csproj.AssemblyReference.cache
+C:\Users\mirco\Desktop\esercizi classi\Tombola grafica\Tombola grafica\obj\Debug\Tombola_grafica.Form1.resources
+C:\Users\mirco\Desktop\esercizi classi\Tombola grafica\Tombola grafica\obj\Debug\Tombola_grafica.Properties.Resources.resources
+C:\Users\mirco\Desktop\esercizi classi\Tombola grafica\Tombola grafica\obj\Debug\Tombola grafica.csproj.GenerateResource.cache
+C:\Users\mirco\Desktop\esercizi classi\Tombola grafica\Tombola grafica\obj\Debug\Tombola grafica.csproj.CoreCompileInputs.cache
+C:\Users\mirco\Desktop\esercizi classi\Tombola grafica\Tombola grafica\obj\Debug\Tombola grafica.exe
+C:\Users\mirco\Desktop\esercizi classi\Tombola grafica\Tombola grafica\obj\Debug\Tombola grafica.pdb
