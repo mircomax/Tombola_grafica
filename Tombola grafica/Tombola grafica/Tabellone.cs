@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,6 +15,7 @@ namespace Tombola_grafica
         private bool[] estratti;
         private int conta;
         private Random random;
+        
 
         public Tabellone()
         {
@@ -21,6 +23,7 @@ namespace Tombola_grafica
             estratti = new bool[90];
             random = new Random();
             conta = 0;
+            
         }
 
         public int estrai()
@@ -36,6 +39,10 @@ namespace Tombola_grafica
             conta++; // Incrementa il contatore
 
             return estratto; // Restituisce il numero estratto
+        }
+        public int getConta()
+        {
+            return conta;
         }
     }
 }
