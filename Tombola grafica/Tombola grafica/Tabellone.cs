@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 
 namespace Tombola_grafica
 {
@@ -17,11 +18,11 @@ namespace Tombola_grafica
         private Random random;
         
 
-        public Tabellone()
+        public Tabellone(Random rand)
         {
             num_estratti = new int[90];
             estratti = new bool[90];
-            random = new Random();
+            random = rand; 
             conta = 0;
             
         }

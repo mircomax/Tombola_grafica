@@ -22,17 +22,18 @@ namespace Tombola_grafica
         Cartella primacartella;
         private Label numeriestratti;
         private Label CartellaTitolo;
-        
+        private Random random;
+        private Label sfondotabellone, sfondocartelle;
         public Form1()
         {
-            
-            primotabellone = new Tabellone();  
-            primacartella = new Cartella();
+            random = new Random();
+            primotabellone = new Tabellone(random);  
+            primacartella = new Cartella(random);
             this.Text = "TOMBOLA";
             this.Size = new Size(900, 800);
             // Inizializzare l'array di Buttons
             buttons = new Button[90];
-            int y = 10;
+            int y = 25;
             int x = 0;
 
             foreach (var button in primacartella.buttons_cartella)// Aggiungere i bottoni della cartella al form
@@ -45,6 +46,7 @@ namespace Tombola_grafica
             {
                 Font = new Font("Arial", 15, FontStyle.Italic),
                 Text = "TABELLONE",
+                BackColor = Color.LightSteelBlue,
                 Location = new System.Drawing.Point(10, 10),
                 Size = new Size(200, 20)
             };
@@ -52,10 +54,10 @@ namespace Tombola_grafica
 
             numeriestratti = new Label()
             {
-                Font = new Font("Arial", 8, FontStyle.Regular),
+                Font = new Font("Arial", 11, FontStyle.Regular),
                 Text = $"NUMERI ESTRATTI FINO AD ADESSO: \n",
-                Location = new System.Drawing.Point(10, 680),
-                Size = new Size(600, 75),
+                Location = new System.Drawing.Point(10, 520),
+                Size = new Size(510, 100),
                 BackColor = Color.Aquamarine,
             };
             this.Controls.Add(numeriestratti);
@@ -63,20 +65,21 @@ namespace Tombola_grafica
             //creare label per contare e visualizzare numeri estrazione
             Estrazione = new Label
             {
-                Font = new Font("Arial", 10, FontStyle.Regular),
+                Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular),
                 Text = $"NUMERO ESTRATTO: {numeroestratto}",
-                Location = new System.Drawing.Point(650, 110),
-                Size = new Size(170, 35)
+                Location = new System.Drawing.Point(550, 110),
+                Size = new Size(200, 50)
                 
             };
             this.Controls.Add(Estrazione);
+
             // Creare e configurare ogni Button
             for (int i = 0; i < buttons.Length; i++)
             {
                 buttons[i] = new Button();
                 buttons[i].Size = new System.Drawing.Size(50, 50);
                 if (i % 10 == 0) { //andare a capo ogni 10 bottoni
-                    y += 70;
+                    y += 50;
                     x = 10;
                 }
 
@@ -96,15 +99,16 @@ namespace Tombola_grafica
 
                 // Aggiungere il Button al Form
                 this.Controls.Add(buttons[i]);
-                x += 60;
+                x += 50;
+
             }
 
             //creare button per estrarre numeri
             Estrarre = new Button
             {
                 Text = "Estrazione",
-                Location = new System.Drawing.Point(650, 50),
-                Size = new Size(170, 50),
+                Location = new System.Drawing.Point(550, 40),
+                Size = new Size(180, 60),
                 BackColor = Color.Red,
                 Font = new Font("Arial", 10, FontStyle.Bold),
                 
@@ -117,12 +121,31 @@ namespace Tombola_grafica
             {
                 Font = new Font("Arial", 13, FontStyle.Italic),
                 Text = "LE TUE CARTELLE:",
-                Location = new System.Drawing.Point(650, 160),
+                Location = new System.Drawing.Point(550, 185),
                 Size = new Size(200, 20)
             };
             this.Controls.Add(CartellaTitolo);
+
+            // Migliorare estetica:
+            sfondotabellone = new Label
+            {
+                BackColor = Color.LightSteelBlue,
+                Location = new System.Drawing.Point(5, 10),
+                Size = new Size(530, 505)
+            };
+            this.Controls.Add(sfondotabellone);
+
+            sfondocartelle = new Label
+            {
+                BackColor = Color.Black,
+                Font = new Font("Arial", 10, FontStyle.Bold),
+                ForeColor = Color.White,
+                Text = "Cartella N.1:",
+                Location = new System.Drawing.Point(550 - 10 , 230 - 20),
+                Size = new Size(270, 180)
+            };
+            this.Controls.Add(sfondocartelle);
         }
-        
         private void Button_Click(object sender, EventArgs e)
         {
         }
@@ -130,20 +153,23 @@ namespace Tombola_grafica
         {
             if (primotabellone.getConta() < 89) //controllare se sono finiti i numeri da estrarre
             {
-                Estrazione.Font = new Font("Arial", 12, FontStyle.Bold);
+                Estrazione.Font = new Font("Microsoft Sans Serif", 12, FontStyle.Bold);
                 Estrazione.Text = "ESTRAZIONE.....";
                 await Task.Delay(1500);
-                Estrazione.Font = new Font("Arial", 10, FontStyle.Regular);
+                Estrazione.Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular);
                 numeroestratto = primotabellone.estrai();
                 Estrazione.Text = $"NUMERO ESTRATTO: {numeroestratto}\n TOTALE: {primotabellone.getConta()}";
-                for (int i = 0; i < 90; i++)
+                
+                for (int i = 0; i < 90; i++) //controllo se numero estratto è presente nel tabellone
                 { 
                     if (int.Parse(buttons[i].Text) == numeroestratto)
                     {
                     buttons[i].BackColor = Color.LightYellow;
                     }
                 }
-                numeriestratti.Text += numeroestratto + ", ";
+                primacartella.Controllo(numeroestratto); //controllo se numero estratto è presente nella cartella
+
+                numeriestratti.Text += numeroestratto + ", "; //aggiunta numero nella label numeri estratti
             }
             else
             {
