@@ -23,7 +23,7 @@ namespace Tombola_grafica
         private Label numeriestratti;
         private Label CartellaTitolo;
         private Random random;
-        private Label sfondotabellone, sfondocartelle;
+        private Label sfondotabellone, sfondocartelle, Ambo;
         public Form1()
         {
             random = new Random();
@@ -72,6 +72,18 @@ namespace Tombola_grafica
                 
             };
             this.Controls.Add(Estrazione);
+
+            //label tipo "Chat" dove viene mostrato quando viene fatto ambo,terna o quaterna...
+            Ambo = new Label
+            {
+                Font = new Font("Arial", 10, FontStyle.Regular),
+                Text = "Partita iniziata\n",
+                BackColor = Color.AliceBlue,
+                Location = new System.Drawing.Point(10, 620),
+                Size = new Size(510, 100)
+
+            };
+            this.Controls.Add(Ambo);
 
             // Creare e configurare ogni Button
             for (int i = 0; i < buttons.Length; i++)
@@ -149,13 +161,13 @@ namespace Tombola_grafica
         private void Button_Click(object sender, EventArgs e)
         {
         }
-        private async void Estrarre_Click(object sender, EventArgs e)
+        private void Estrarre_Click(object sender, EventArgs e)
         {
             if (primotabellone.getConta() < 89) //controllare se sono finiti i numeri da estrarre
             {
                 Estrazione.Font = new Font("Microsoft Sans Serif", 12, FontStyle.Bold);
                 Estrazione.Text = "ESTRAZIONE.....";
-                await Task.Delay(1500);
+                //await Task.Delay(1500);
                 Estrazione.Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular);
                 numeroestratto = primotabellone.estrai();
                 Estrazione.Text = $"NUMERO ESTRATTO: {numeroestratto}\n TOTALE: {primotabellone.getConta()}";
@@ -168,8 +180,13 @@ namespace Tombola_grafica
                     }
                 }
                 primacartella.Controllo(numeroestratto); //controllo se numero estratto è presente nella cartella
-
-                numeriestratti.Text += numeroestratto + ", "; //aggiunta numero nella label numeri estratti
+                var risultato = primacartella.ControlloAmboTerna();
+                if (risultato != null)
+                {
+                    Ambo.Font = new Font("Arial", 13, FontStyle.Bold);
+                    Ambo.Text += risultato + "\n";
+                }
+                numeriestratti.Text += numeroestratto + ", "; //aggiunta numero nella label numeri estrazione
             }
             else
             {
