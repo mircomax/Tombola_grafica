@@ -35,7 +35,6 @@ namespace Tombola_grafica
             buttons = new Button[90];
             int y = 25;
             int x = 0;
-
             foreach (var button in primacartella.buttons_cartella)// Aggiungere i bottoni della cartella al form
             {
                 this.Controls.Add(button);

@@ -33,7 +33,7 @@ namespace Tombola_grafica
             linea2 = new Linea();
             linea3 = new Linea();
             nuova();
-            
+            creaCartella();
             setLinee();
         }
 
@@ -56,20 +56,45 @@ namespace Tombola_grafica
 
                 num_generati[numero - 1] = true; // Segna il numero come generato
                 num_cartella[i] = numero;
+            }
+            
+        }
+        private void bubbleSort(int DimensioneIniziale, int DimensioneFinale)
+        {
+            for (int i = 0; i < 5 - 1; i++)
+            {
+                for (int j = DimensioneIniziale; j < DimensioneFinale - i - 1; j++)
+                {
+                    if (num_cartella[j] > num_cartella[j + 1])
+                    {
+                        int temp = num_cartella[j];
+                        num_cartella[j] = num_cartella[j + 1];
+                        num_cartella[j + 1] = temp;
+                    }
+                }
+            }
+        }
+        public void creaCartella()
+        {
+            bubbleSort(0,5);
+            bubbleSort(5, 10);
+            bubbleSort(10, 15);
+            for (int i = 0; i < 15; i++)
+            {
                 buttons_cartella[i] = new Button
                 {
-                    Text = numero.ToString(),
-                    Size = new System.Drawing.Size(50,50),
-                    Location = new System.Drawing.Point(x,y),
+                    Text = num_cartella[i].ToString(),
+                    Size = new System.Drawing.Size(50, 50),
+                    Location = new System.Drawing.Point(x, y),
                 };
-                
                 x += 50; //DISTANZIARE OGNI PULSANTE
-                if(i == 4 || i == 9) //DIVIDERE LE RIGHE ORIZZONTALI  
+                if (i == 4 || i == 9) //DIVIDERE LE RIGHE ORIZZONTALI  
                 {
                     x = 550;
                     y += 50;
                 }
             }
+            
         }
         public void setLinee()
         {
