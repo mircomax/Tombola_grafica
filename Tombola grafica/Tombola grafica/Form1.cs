@@ -16,29 +16,33 @@ namespace Tombola_grafica
         private Button[] buttons;
         private Label titolo;
         private Label Estrazione;
-        public int numeroestratto = 0;
-        private Button Estrarre;
+        private bool[] Tombolagiafatta = { false, false, false };
+        public int numeroestratto = 0, numerocartellevero;
+        private Button Estrarre, confirmButton;
         Tabellone primotabellone;
-        Cartella primacartella;
+        //Cartella primacartella;
+        private Cartella[] cartelle;
         private Label numeriestratti;
         private Label CartellaTitolo;
         private Random random;
-        private Label sfondotabellone, sfondocartelle, Ambo;
+        private Label sfondotabellone,Ambo;
+        private Label[] sfondocartelle;
+        private Panel pannelloiniziale;
+        private NumericUpDown cartelleNumericUpDown;
         public Form1()
         {
+            numerocartellevero = new int();
             random = new Random();
             primotabellone = new Tabellone(random);  
-            primacartella = new Cartella(random);
+            
             this.Text = "TOMBOLA";
             this.Size = new Size(900, 800);
+            initializePanel();
             // Inizializzare l'array di Buttons
             buttons = new Button[90];
             int y = 25;
             int x = 0;
-            foreach (var button in primacartella.buttons_cartella)// Aggiungere i bottoni della cartella al form
-            {
-                this.Controls.Add(button);
-            }
+            
             
             //creare label titolo
             titolo = new Label
@@ -75,7 +79,7 @@ namespace Tombola_grafica
             //label tipo "Chat" dove viene mostrato quando viene fatto ambo,terna o quaterna...
             Ambo = new Label
             {
-                Font = new Font("Arial", 10, FontStyle.Regular),
+                Font = new Font("Arial", 12, FontStyle.Regular),
                 Text = "Partita iniziata\n",
                 BackColor = Color.AliceBlue,
                 Location = new System.Drawing.Point(10, 620),
@@ -132,7 +136,7 @@ namespace Tombola_grafica
             {
                 Font = new Font("Arial", 13, FontStyle.Italic),
                 Text = "LE TUE CARTELLE:",
-                Location = new System.Drawing.Point(550, 185),
+                Location = new System.Drawing.Point(550, 165),
                 Size = new Size(200, 20)
             };
             this.Controls.Add(CartellaTitolo);
@@ -146,27 +150,17 @@ namespace Tombola_grafica
             };
             this.Controls.Add(sfondotabellone);
 
-            sfondocartelle = new Label
-            {
-                BackColor = Color.Black,
-                Font = new Font("Arial", 10, FontStyle.Bold),
-                ForeColor = Color.White,
-                Text = "Cartella N.1:",
-                Location = new System.Drawing.Point(550 - 10 , 230 - 20),
-                Size = new Size(270, 180)
-            };
-            this.Controls.Add(sfondocartelle);
         }
         private void Button_Click(object sender, EventArgs e)
         {
         }
-        private void Estrarre_Click(object sender, EventArgs e)
+        private async void Estrarre_Click(object sender, EventArgs e)
         {
             if (primotabellone.getConta() < 89) //controllare se sono finiti i numeri da estrarre
             {
-                Estrazione.Font = new Font("Microsoft Sans Serif", 12, FontStyle.Bold);
+                Estrazione.Font = new Font("Arial", 12, FontStyle.Bold);
                 Estrazione.Text = "ESTRAZIONE.....";
-                //await Task.Delay(1500);
+                await Task.Delay(1500);
                 Estrazione.Font = new Font("Microsoft Sans Serif", 12, FontStyle.Regular);
                 numeroestratto = primotabellone.estrai();
                 Estrazione.Text = $"NUMERO ESTRATTO: {numeroestratto}\n TOTALE: {primotabellone.getConta()}";
@@ -175,16 +169,27 @@ namespace Tombola_grafica
                 { 
                     if (int.Parse(buttons[i].Text) == numeroestratto)
                     {
-                    buttons[i].BackColor = Color.LightYellow;
+                        buttons[i].BackColor = Color.LightYellow;
+                        buttons[i].Enabled = false;
                     }
                 }
-                primacartella.Controllo(numeroestratto); //controllo se numero estratto è presente nella cartella
-                var risultato = primacartella.ControlloAmboTerna();
-                if (risultato != null)
+                
+                for (int i = 0; i < numerocartellevero; i++)
                 {
-                    Ambo.Font = new Font("Arial", 13, FontStyle.Bold);
-                    Ambo.Text += risultato + "\n";
+                    var risultato = cartelle[i].AggiornaCartella(numeroestratto);
+                    if (cartelle[i].ControlloTombola() && !Tombolagiafatta[i])
+                    {
+                        Tombolagiafatta[i] = true;
+                        MessageBox.Show($"Hai fatto tombola nella cartella {i + 1}!", "TOMBOLA!!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
+                    if (risultato != null)
+                    {
+                        Ambo.Font = new Font("Arial", 10, FontStyle.Bold);
+                        Ambo.Text += $"Hai fatto {risultato} nella cartella {i+1}!\n";
+                        giafatto(risultato);
+                    }
                 }
+
                 numeriestratti.Text += numeroestratto + ", "; //aggiunta numero nella label numeri estrazione
             }
             else
@@ -198,7 +203,111 @@ namespace Tombola_grafica
 
         }
             
+        private void initializePanel()
+        {
+            pannelloiniziale = new Panel()
+            {
+                Size = new Size(300, 150),
+                Location = new Point((this.ClientSize.Width - 300) / 2, (this.ClientSize.Height - 150) / 2),
+                BorderStyle = BorderStyle.FixedSingle
+            };
 
+            Label setupLabel = new Label
+            {
+                Text = "Seleziona il numero di cartelle che desideri:",
+                Location = new Point(10, 10),
+                Size = new Size(280, 20)
+            };
+
+            cartelleNumericUpDown = new NumericUpDown
+            {
+                Minimum = 1,
+                Maximum = 3, // Imposta il massimo numero di cartelle desiderato
+                Value = 1,
+                Location = new Point(10, 40),
+                Size = new Size(280, 20)
+            };
+
+            confirmButton = new Button
+            {
+                Text = "Conferma",
+                Location = new Point(10, 70),
+                Size = new Size(280, 30)
+            };
+            confirmButton.Click += confirmButton_Click;
+
+            // Aggiungi i controlli al pannello di setup
+            pannelloiniziale.Controls.Add(setupLabel);
+            pannelloiniziale.Controls.Add(cartelleNumericUpDown);
+            pannelloiniziale.Controls.Add(confirmButton);
+
+            // Aggiungi il pannello di setup al form principale
+            this.Controls.Add(pannelloiniziale);
+        }
+        private void CreaCartelle(int numerocartelle)
+        {
+            cartelle = new Cartella[numerocartelle];
+            for(int i = 0; i < numerocartelle; i++)
+            {
+                cartelle[i] = new Cartella(random);
+                cartelle[i].creaCartella(i * 185);
+                foreach (var button in cartelle[i].buttons_cartella)
+                {
+                    this.Controls.Add(button);
+                }
+            }
+            
+        }
+        private void creasfondocartelle(int numerocartelle)
+        {
+            sfondocartelle = new Label[numerocartelle];
+            for(int i = 0; i < numerocartelle; i++)
+            {
+                sfondocartelle[i] = new Label()
+                {
+                    BackColor = Color.Black,
+                    Font = new Font("Arial", 10, FontStyle.Bold),
+                    ForeColor = Color.White,
+                    Text = $"Cartella N.{i+1}:",
+                    Location = new System.Drawing.Point(540, 190 + (i * 185)),
+                    Size = new Size(270, 180)
+                };
+                this.Controls.Add(sfondocartelle[i]);
+            }
+        }
+        private void confirmButton_Click(object sender, EventArgs e)
+        {
+            int numerocartelle = (int)cartelleNumericUpDown.Value;
+            numerocartellevero = numerocartelle;
+            pannelloiniziale.Hide();
+            CreaCartelle(numerocartelle);
+            creasfondocartelle(numerocartelle);
+        }
+
+        private void giafatto(string risultato)
+        {
+            for (int i = 0; i < numerocartellevero; i++)
+            {
+                switch (risultato)
+                {
+                    case "Ambo":
+                        cartelle[i].setAmbofatto();
+                        break;
+
+                    case "Terna":
+                        cartelle[i].setTernafatto();
+                        break;
+
+                    case "Quaterna":
+                        cartelle[i].setQuaternafatta();
+                        break;
+
+                    case "Cinquina":
+                        cartelle[i].setCinquinafatta();
+                        break;
+                }
+            }
+        }
         private void Form1_Load(object sender, EventArgs e)
         {
 

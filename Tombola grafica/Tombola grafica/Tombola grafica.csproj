@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Dababy Let%27s Go Sound Effect.wav" />
+    <Content Include="videoplayback-_2_.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

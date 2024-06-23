@@ -22,11 +22,20 @@ namespace Tombola_grafica
                 this.valori[i] = bottone;
             }
 
-            public bool isColoreMatch(Color colore, int i)
+            public int contaNumeriEstratti()
             {
-                return valori[i].BackColor == colore;
+                int count = 0;
+                for (int i = 0; i < 5; i++)
+                {
+                    if (valori[i].BackColor == Color.LightYellow)
+                    {
+                        count++;
+                    }
+                }
+                return count;
             }
+
         }
 
-    }
+}
 

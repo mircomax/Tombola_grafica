@@ -18,22 +18,20 @@ namespace Tombola_grafica
         private int[] num_cartella;
         private bool[] num_generati;
         Linea linea1, linea2, linea3;
-        private int ambofatto = 0, ternafatta = 0, quaternafatta = 0, cinquinafatta = 0;
+        
+        private bool amboSegnato = false, ternaSegnata = false, quaternaSegnata = false, cinquinaSegnata = false;
         public Cartella(Random rand)
         {
             buttons_cartella = new Button[15];
             random = rand;
-            ambofatto = new int();
-            ternafatta = new int();
-            quaternafatta = new int();
-            cinquinafatta = new int();
+            
             num_cartella = new int[15];
             num_generati = new bool[90];
             linea1 = new Linea();
             linea2 = new Linea();
             linea3 = new Linea();
             nuova();
-            creaCartella();
+            creaCartella(0);
             setLinee();
         }
 
@@ -74,8 +72,9 @@ namespace Tombola_grafica
                 }
             }
         }
-        public void creaCartella()
+        public void creaCartella(int y2)
         {
+            int x = 550, y = 210 + y2;
             bubbleSort(0,5);
             bubbleSort(5, 10);
             bubbleSort(10, 15);
@@ -103,71 +102,95 @@ namespace Tombola_grafica
                 if (i < 5)
                 {
                     linea1.setValori(buttons_cartella[i], i);
+                   
                 }
                 else if (i < 10)
                 {
                     linea2.setValori(buttons_cartella[i], i % 5);
+                    
                 }
                 else
                 {
                     linea3.setValori(buttons_cartella[i], i % 5);
+                    
                 }
             }
         }
-
-        public string ControlloAmboTerna()
+        public string AggiornaCartella(int numeroEstratto)
         {
-            int c1 = 0, c2 = 0, c3 = 0;
-            for (int i = 0; i < 5; i++)
+            setLinee();
+            for (int i = 0; i < buttons_cartella.Length; i++)
             {
-                if (linea1.isColoreMatch(Color.LightYellow, i)) { c1++; }
-                if (linea2.isColoreMatch(Color.LightYellow, i)) { c2++; }
-                if (linea3.isColoreMatch(Color.LightYellow, i)) { c3++; }
+                if (buttons_cartella[i].Text == numeroEstratto.ToString())
+                {
+                    buttons_cartella[i].BackColor = Color.LightYellow;
+                    buttons_cartella[i].Enabled = false;
+                }
             }
 
-            if ((c1 == 2 || c2 == 2 || c3 == 2) && ambofatto == 0)
+            int c1 = linea1.contaNumeriEstratti();
+            int c2 = linea2.contaNumeriEstratti();
+            int c3 = linea3.contaNumeriEstratti();
+
+            if ((c1 == 2 || c2 == 2 || c3 == 2) && !amboSegnato)
             {
-                PlayVictorySound();
                 FlashButtons(buttons_cartella.Where(btn => btn.BackColor == Color.LightYellow).ToArray());
-                ambofatto++;
-                return "Hai fatto ambo!";
+                //PlayVictorySound();
+                return "Ambo";
             }
-            if ((c1 == 3 || c2 == 3 || c3 == 3) && ternafatta == 0)
+            if ((c1 == 3 || c2 == 3 || c3 == 3) && !ternaSegnata)
             {
-                PlayVictorySound();
                 FlashButtons(buttons_cartella.Where(btn => btn.BackColor == Color.LightYellow).ToArray());
-                ternafatta++;
-                return "Hai fatto terna!";
+                //PlayVictorySound();
+                return "Terna";
             }
-            if ((c1 == 4 || c2 == 4 || c3 == 4) && quaternafatta == 0)
+            if ((c1 == 4 || c2 == 4 || c3 == 4) && !quaternaSegnata)
             {
-                PlayVictorySound();
                 FlashButtons(buttons_cartella.Where(btn => btn.BackColor == Color.LightYellow).ToArray());
-                quaternafatta++;
-                return "Hai fatto quaterna!";
+                //PlayVictorySound();
+                return "Quaterna";
             }
-            if ((c1 == 5 || c2 == 5 || c3 == 5) && cinquinafatta == 0)
+            if ((c1 == 5 || c2 == 5 || c3 == 5) && !cinquinaSegnata)
             {
-                PlayVictorySound();
                 FlashButtons(buttons_cartella.Where(btn => btn.BackColor == Color.LightYellow).ToArray());
-                cinquinafatta++;
-                return "Hai fatto cinquina!";
+                //PlayVictorySound();
+                return "Cinquina";
             }
 
             return null;
         }
 
-        public void Controllo(int estratto)
+        public bool ControlloTombola()
         {
-            for(int i = 0;i < buttons_cartella.Length; i++)
+            for (int i = 0; i < 15; i++)
             {
-                if (int.Parse(buttons_cartella[i].Text) == estratto)
+                if (buttons_cartella[i].BackColor != Color.LightYellow)
                 {
-                    buttons_cartella[i].BackColor = System.Drawing.Color.LightYellow;
+                    return false;
                 }
             }
+            return true;
+        }
+        public void setAmbofatto()
+        {
+            amboSegnato = true;
         }
 
+        public void setTernafatto()
+        {
+            ternaSegnata = true;
+        }
+
+        public void setQuaternafatta()
+        {
+            quaternaSegnata = true;
+        }
+
+        public void setCinquinafatta()
+        {
+            cinquinaSegnata = true;
+        }
+        
         private async void FlashButtons(Button[] buttons)
         {
             for (int i = 0; i < 3; i++)
@@ -184,13 +207,5 @@ namespace Tombola_grafica
                 await Task.Delay(300);
             }
         }
-
-        private void PlayVictorySound()
-        {
-            System.Media.SoundPlayer player = new System.Media.SoundPlayer(@"C:\Users\mirco\Desktop\esercizi classi\Tombola grafica\Tombola grafica\Dababy Let's Go Sound Effect.wav");
-            player.Play();
-        }
-    }
-
-
+    }    
 }
